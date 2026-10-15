@@ -1,0 +1,77 @@
+@import "@fontsource-variable/manrope";
+@import "@fontsource-variable/inter";
+@import "tailwindcss";
+
+/* Tokens de la línea visual compartida con el banner de LinkedIn y Tu Plan Digital. */
+@theme {
+  --color-navy: #050816;
+  --color-surface: #0a0f24;
+  --color-raised: #0f1630;
+  --color-line: #1b2238;
+  --color-blue: #0757d9;
+  --color-electric: #1687ff;
+  --color-cyan: #12d9e8;
+  --color-mute: #a7b0c2;
+  --color-soft: #d6dbe6;
+
+  --font-display: "Manrope Variable", "Manrope", system-ui, sans-serif;
+  --font-sans: "Inter Variable", "Inter", system-ui, sans-serif;
+}
+
+@layer base {
+  html {
+    background: var(--color-navy);
+    color: var(--color-soft);
+    scroll-behavior: smooth;
+    scroll-padding-top: 5rem;
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    font-family: var(--font-sans);
+    font-size: 1.0625rem;
+    line-height: 1.65;
+    text-rendering: optimizeLegibility;
+  }
+  h1, h2, h3 {
+    font-family: var(--font-display);
+    color: #fff;
+    text-wrap: balance;
+  }
+  p { text-wrap: pretty; }
+  a { color: inherit; }
+  :focus-visible {
+    outline: 2px solid var(--color-cyan);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+  }
+}
+
+@layer components {
+  .wrap { width: 100%; max-width: 72rem; margin-inline: auto; padding-inline: 1.25rem; }
+  @media (min-width: 640px) { .wrap { padding-inline: 2rem; } }
+
+  /* Capturas con marco oscuro y brillo azul tenue, el mismo formato de los Destacados. */
+  .shot {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: 0.625rem;
+    box-shadow: 0 0 0 4px var(--color-navy), 0 0 0 5px var(--color-line), 0 0 48px rgb(22 135 255 / 0.16);
+    background: var(--color-surface);
+  }
+  .shot-phone { border-radius: 1rem; }
+
+  .link-u {
+    color: var(--color-electric);
+    font-weight: 600;
+    text-decoration: underline;
+    text-decoration-color: rgb(22 135 255 / 0.35);
+    text-underline-offset: 4px;
+    transition: text-decoration-color 0.15s, color 0.15s;
+  }
+  .link-u:hover { color: var(--color-cyan); text-decoration-color: currentColor; }
+}
