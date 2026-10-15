@@ -3,6 +3,9 @@
   "type": "module",
   "version": "1.0.0",
   "private": true,
+  "engines": {
+    "node": ">=22.22.0"
+  },
   "description": "Portafolio de Ricardo Martínez, desarrollador Full Stack. Sitio estático en Astro + Tailwind, en inglés y español.",
   "scripts": {
     "dev": "astro dev",
