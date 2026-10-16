@@ -1,0 +1,49 @@
+---
+import { type Lang, otherLang, ui } from "../data/i18n";
+
+interface Props {
+  lang: Lang;
+  path: string;
+}
+
+const { lang, path } = Astro.props;
+const t = ui[lang];
+const home = `/${lang}/`;
+const sections = [
+  { id: "apps", label: t.nav.apps },
+  { id: "websites", label: t.nav.websites },
+  { id: "experience", label: t.nav.experience },
+  { id: "contact", label: t.nav.contact },
+];
+---
+
+<header class="sticky top-0 z-40 border-b border-line/70 bg-navy/85 backdrop-blur-md">
+  <div class="wrap flex h-16 items-center justify-between gap-4">
+    <a href={home} class="flex items-center gap-2.5 font-display text-[1.0625rem] font-extrabold tracking-tight text-white">
+      <span aria-hidden="true" class="size-2.5 bg-cyan"></span>
+      Ricardo Martínez
+    </a>
+    <nav aria-label={lang === "en" ? "Main" : "Principal"} class="flex items-center gap-1 sm:gap-2">
+      <ul class="hidden items-center gap-1 md:flex">
+        {
+          sections.map((s) => (
+            <li>
+              <a href={`${home}#${s.id}`} class="rounded-md px-3 py-2 text-[0.9375rem] text-mute transition-colors hover:text-white">
+                {s.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+      <a
+        href={`/${otherLang(lang)}/${path}`}
+        hreflang={otherLang(lang)}
+        lang={otherLang(lang)}
+        aria-label={t.switchLabel}
+        class="rounded-md border border-line px-3 py-1.5 text-sm font-semibold text-white transition-colors hover:border-electric"
+      >
+        {t.switchTo}
+      </a>
+    </nav>
+  </div>
+</header>

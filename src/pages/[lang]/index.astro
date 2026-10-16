@@ -1,0 +1,306 @@
+---
+import Base from "../../layouts/Base.astro";
+import Status from "../../components/Status.astro";
+import Stack from "../../components/Stack.astro";
+import Browser from "../../components/Browser.astro";
+import Phone from "../../components/Phone.astro";
+import ContactForm from "../../components/ContactForm.astro";
+import { type Lang, langs, ui } from "../../data/i18n";
+import { apps, education, experience, languages, principles, profile, websites } from "../../data/profile";
+import { vigia } from "../../data/vigia";
+import { host, monthYear } from "../../lib/format";
+
+export function getStaticPaths() {
+  return langs.map((lang) => ({ params: { lang } }));
+}
+
+const lang = Astro.params.lang as Lang;
+const t = ui[lang];
+const [featured, ...otherApps] = apps;
+const f = featured.text[lang];
+// Las apps con detalle van destacadas a lo ancho; las demás, en tarjetas de a dos.
+const majorApps = otherApps.filter((app) => app.text[lang].points.length > 0);
+const minorApps = otherApps.filter((app) => app.text[lang].points.length === 0);
+const hazards = { src: "/projects/vigia-sms-hazards-desktop.webp", w: 1200, h: 750 };
+// Con un número impar de sitios, el último ocupa el ancho completo.
+const wideLast = websites.length % 2 === 1;
+const hazardsAlt =
+  lang === "en"
+    ? "Vigía SMS hazard register next to the ICAO risk matrix"
+    : "Registro de peligros de Vigía SMS junto a la matriz de riesgo de la OACI";
+const orgName =(org: string | Record<Lang, string>) => (typeof org === "string" ? org : org[lang]);
+---
+
+<Base lang={lang} path="">
+  <!-- Portada: el rol primero y el producto real al lado -->
+  <section class="relative isolate overflow-hidden">
+    <div aria-hidden="true" class="absolute -right-56 -top-72 -z-10 size-[56rem] rounded-full bg-[radial-gradient(circle,rgb(22_135_255/0.22)_0%,rgb(7_87_217/0.08)_42%,transparent_70%)]"></div>
+    <div class="wrap grid items-center gap-14 pb-20 pt-14 sm:pt-20 lg:grid-cols-[1.05fr_1fr] lg:gap-12 lg:pb-28 lg:pt-24">
+      <div>
+        <h1 class="max-w-[18ch] text-[2.5rem] font-extrabold leading-[1.04] tracking-[-0.035em] sm:text-[3.25rem] lg:text-[3.75rem]">
+          {t.heroTitle}
+        </h1>
+        <p class="mt-6 max-w-[60ch] text-lg leading-relaxed text-mute">{t.heroLead}</p>
+        <div class="mt-9 flex flex-wrap items-center gap-3">
+          <a href="#apps" class="rounded-lg bg-electric px-5 py-3 font-semibold text-white transition-colors hover:bg-blue">{t.heroCta}</a>
+          <a href="#contact" class="rounded-lg border border-line px-5 py-3 font-semibold text-white transition-colors hover:border-electric">{t.heroEmail}</a>
+          <a href={profile.github} class="px-2 py-3 font-semibold text-mute transition-colors hover:text-white">GitHub</a>
+        </div>
+        <p class="mt-8 flex items-start gap-3 text-[0.9375rem] text-mute">
+          <span aria-hidden="true" class="mt-2 size-2 shrink-0 bg-cyan"></span>
+          {t.heroStatus}
+        </p>
+      </div>
+
+      <figure>
+        <div class="relative pb-8 pr-8 sm:pb-10 sm:pr-12">
+          <Browser src={featured.shot!.desktop!.src} alt={f.shotAlt!} width={1200} height={750} url="vigiasmspilot.vercel.app" eager />
+          <Phone src={featured.shot!.mobile!.src} alt="" width={480} height={1039} eager class="absolute bottom-0 right-0 w-[22%] min-w-20" />
+        </div>
+        <figcaption class="mt-5 text-sm text-mute">
+          <a href={featured.demo} class="link-u">{t.heroShot}</a>
+        </figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- Apps -->
+  <section id="apps" aria-labelledby="apps-title" class="border-t border-line py-20 lg:py-28">
+    <div class="wrap">
+      <div class="max-w-2xl">
+        <h2 id="apps-title" class="text-3xl font-extrabold tracking-tight sm:text-[2.5rem]">{t.appsTitle}</h2>
+        <p class="mt-3 text-lg text-mute">{t.appsIntro}</p>
+      </div>
+
+      <article class="mt-12 grid gap-10 rounded-2xl border border-line bg-surface p-6 sm:p-10 lg:grid-cols-[1.15fr_1fr] lg:gap-14">
+        <div class="order-2 min-w-0 self-start lg:order-1">
+          <div class="stage">
+            <div class="relative pb-8 pr-8">
+              <Browser src={hazards.src} alt={hazardsAlt} width={hazards.w} height={hazards.h} url="vigiasmspilot.vercel.app/peligros" />
+              <Phone src={featured.shot!.mobile!.src} alt={vigia[lang].mobileAlt} width={480} height={1039} class="absolute bottom-0 right-0 w-[24%] min-w-20" />
+            </div>
+          </div>
+        </div>
+        <div class="order-1 min-w-0 lg:order-2">
+          <div class="flex flex-wrap items-center gap-3">
+            <h3 class="text-2xl font-extrabold tracking-tight sm:text-3xl">{featured.name}</h3>
+            {featured.status.map((s) => <Status lang={lang} status={s} />)}
+          </div>
+          <p class="mt-2 font-display text-lg font-semibold text-white">{f.tagline}</p>
+          <p class="mt-4 text-mute">{f.summary}</p>
+          <ul class="mt-6 space-y-3">
+            {
+              f.points.map((p) => (
+                <li class="flex gap-3">
+                  <span aria-hidden="true" class="mt-[0.6rem] size-1.5 shrink-0 bg-cyan" />
+                  <span>{p}</span>
+                </li>
+              ))
+            }
+          </ul>
+          <div class="mt-7"><Stack lang={lang} items={featured.stack} /></div>
+          <div class="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3">
+            <a href={featured.demo} class="rounded-lg bg-electric px-4 py-2.5 font-semibold text-white transition-colors hover:bg-blue">{t.links.demo}</a>
+            <a href={`/${lang}/${featured.caseStudy}`} class="link-u">{t.links.case}</a>
+            <span class="text-sm text-mute">{t.codePrivate}</span>
+          </div>
+        </div>
+      </article>
+
+      {
+        majorApps.map((app) => {
+          const a = app.text[lang];
+          return (
+            <article class="mt-6 grid gap-10 rounded-2xl border border-line p-6 sm:p-10 lg:grid-cols-[1fr_1.15fr] lg:gap-14">
+              <div>
+                <div class="flex flex-wrap items-center gap-3">
+                  <h3 class="text-2xl font-extrabold tracking-tight sm:text-3xl">{app.name}</h3>
+                  {app.status.map((s) => <Status lang={lang} status={s} />)}
+                </div>
+                <p class="mt-2 font-display text-lg font-semibold text-white">{a.tagline}</p>
+                <p class="mt-4 text-mute">{a.summary}</p>
+                <ul class="mt-6 space-y-3">
+                  {a.points.map((p) => (
+                    <li class="flex gap-3">
+                      <span aria-hidden="true" class="mt-[0.6rem] size-1.5 shrink-0 bg-cyan" />
+                      <span>{p}</span>
+                    </li>
+                  ))}
+                </ul>
+                <div class="mt-7"><Stack lang={lang} items={app.stack} /></div>
+                {app.code ? (
+                  <a href={app.code} class="link-u mt-6 inline-block">{t.links.code}</a>
+                ) : (
+                  <p class="mt-6 text-sm text-mute">{t.codePrivate}</p>
+                )}
+              </div>
+              {app.shot?.mobile && (
+                <div class="stage flex items-center justify-center self-start !py-10">
+                  <Phone src={app.shot.mobile.src} alt={a.shotAlt ?? ""} width={app.shot.mobile.w} height={app.shot.mobile.h} class="w-48 sm:w-56" />
+                </div>
+              )}
+            </article>
+          );
+        })
+      }
+
+      <div class="mt-6 grid gap-6 lg:grid-cols-2">
+        {
+          minorApps.map((app) => {
+            const a = app.text[lang];
+            return (
+              <article class="flex flex-col gap-6 rounded-2xl border border-line p-5 sm:flex-row sm:p-6">
+                {app.shot?.mobile && (
+                  <div class="stage flex shrink-0 items-center justify-center !p-5 sm:w-48">
+                    <Phone src={app.shot.mobile.src} alt={a.shotAlt ?? ""} width={app.shot.mobile.w} height={app.shot.mobile.h} class="w-36" />
+                  </div>
+                )}
+                <div class="flex min-w-0 flex-1 flex-col">
+                  <h3 class="text-xl font-extrabold tracking-tight">{app.name}</h3>
+                  <div class="mt-3 flex flex-wrap gap-2">
+                    {app.status.map((s) => <Status lang={lang} status={s} />)}
+                  </div>
+                  <p class="mt-4 font-display font-semibold text-white">{a.tagline}</p>
+                  <p class="mt-2 text-[0.9375rem] text-mute">{a.summary}</p>
+                  <div class="mt-auto pt-6">
+                    <Stack lang={lang} items={app.stack} />
+                    {app.code ? (
+                      <a href={app.code} class="link-u mt-4 inline-block text-[0.9375rem]">{t.links.code}</a>
+                    ) : (
+                      <p class="mt-4 text-sm text-mute">{t.codePrivate}</p>
+                    )}
+                  </div>
+                </div>
+              </article>
+            );
+          })
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- Sitios web -->
+  <section id="websites" aria-labelledby="websites-title" class="border-t border-line py-20 lg:py-28">
+    <div class="wrap">
+      <div class="max-w-2xl">
+        <h2 id="websites-title" class="text-3xl font-extrabold tracking-tight sm:text-[2.5rem]">{t.websitesTitle}</h2>
+        <p class="mt-3 text-lg text-mute">{t.websitesIntro}</p>
+      </div>
+      <ul class="mt-12 grid gap-x-8 gap-y-14 md:grid-cols-2">
+        {
+          websites.map((w, i) => {
+            const s = w.text[lang];
+            const wide = wideLast && i === websites.length - 1;
+            const d = w.shot.desktop!;
+            const m = w.shot.mobile!;
+            return (
+              <li class:list={[wide && "md:col-span-2 md:grid md:grid-cols-[1.35fr_1fr] md:items-center md:gap-10"]}>
+                <a href={w.url} class="group block rounded-2xl" aria-label={`${w.name}, ${host(w.url)}`}>
+                  <div class="stage flex items-end gap-4 transition-[border-color] group-hover:border-electric/60 sm:gap-5">
+                    <Browser src={d.src} alt="" width={d.w} height={d.h} url={host(w.url)} class="min-w-0 flex-1" />
+                    <Phone src={m.src} alt="" width={m.w} height={m.h} class={wide ? "w-[19%] shrink-0" : "w-[24%] shrink-0"} />
+                  </div>
+                </a>
+                <div class:list={["mt-6", wide && "md:mt-0"]}>
+                  <h3 class="text-xl font-extrabold tracking-tight">
+                    <a href={w.url} class="hover:text-cyan">{w.name}</a>
+                  </h3>
+                  <p class="mt-1 text-[0.9375rem] font-medium text-soft">{s.kind}</p>
+                  <p class="mt-2 text-[0.9375rem] text-mute">{s.summary}</p>
+                  <a href={w.url} class="link-u mt-3 inline-block text-[0.9375rem]">{host(w.url)}</a>
+                </div>
+              </li>
+            );
+          })
+        }
+      </ul>
+    </div>
+  </section>
+
+  <!-- Cómo trabajo -->
+  <section aria-labelledby="how-title" class="border-t border-line bg-surface py-20 lg:py-24">
+    <div class="wrap grid gap-10 lg:grid-cols-[1fr_2fr]">
+      <h2 id="how-title" class="text-3xl font-extrabold tracking-tight sm:text-[2.5rem]">{t.howTitle}</h2>
+      <dl class="grid gap-x-10 gap-y-8 sm:grid-cols-2">
+        {
+          principles[lang].map((p) => (
+            <div>
+              <dt class="font-display text-lg font-bold text-white">{p.title}</dt>
+              <dd class="mt-1.5 text-mute">{p.text}</dd>
+            </div>
+          ))
+        }
+      </dl>
+    </div>
+  </section>
+
+  <!-- Experiencia -->
+  <section id="experience" aria-labelledby="experience-title" class="border-t border-line py-20 lg:py-28">
+    <div class="wrap grid gap-12 lg:grid-cols-[1fr_2fr]">
+      <h2 id="experience-title" class="text-3xl font-extrabold tracking-tight sm:text-[2.5rem]">{t.experienceTitle}</h2>
+      <div>
+        <ol class="relative border-l border-line">
+          {
+            experience.map((r) => (
+              <li class="relative pb-11 pl-8 last:pb-0">
+                <span aria-hidden="true" class="absolute -left-[5px] top-2 size-2.5 bg-cyan" />
+                <p class="text-sm text-mute">
+                  <time datetime={r.from}>{monthYear(r.from, lang)}</time> – {r.to ? <time datetime={r.to}>{monthYear(r.to, lang)}</time> : t.present}
+                </p>
+                <h3 class="mt-1 text-lg font-bold">{r.title[lang]}</h3>
+                <p class="font-medium text-soft">
+                  {orgName(r.org)}, {r.place[lang]}
+                </p>
+                <p class="mt-2 max-w-[62ch] text-[0.9375rem] text-mute">{r.text[lang]}</p>
+              </li>
+            ))
+          }
+        </ol>
+
+        <div class="mt-16 grid gap-12 sm:grid-cols-[2fr_1fr]">
+          <div>
+            <h3 class="text-xl font-extrabold tracking-tight">{t.educationTitle}</h3>
+            <ul class="mt-5 space-y-7">
+              {
+                education.map((e) => (
+                  <li>
+                    <p class="text-sm text-mute">
+                      {monthYear(e.from, lang)} – {monthYear(e.to, lang)}
+                    </p>
+                    <p class="mt-1 font-bold text-white">{e.title[lang]}</p>
+                    <p class="font-medium text-soft">{e.org}</p>
+                    {e.text && <p class="mt-2 text-[0.9375rem] text-mute">{e.text[lang]}</p>}
+                  </li>
+                ))
+              }
+            </ul>
+          </div>
+          <div>
+            <h3 class="text-xl font-extrabold tracking-tight">{t.languagesTitle}</h3>
+            <ul class="mt-5 space-y-2 text-[0.9375rem] text-soft">
+              {languages[lang].map((l) => <li>{l}</li>)}
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contacto -->
+  <section id="contact" aria-labelledby="contact-title" class="relative isolate overflow-hidden border-t border-line py-24 lg:py-32">
+    <div aria-hidden="true" class="absolute -bottom-96 -left-56 -z-10 size-[52rem] rounded-full bg-[radial-gradient(circle,rgb(22_135_255/0.18)_0%,transparent_65%)]"></div>
+    <div class="wrap grid gap-12 lg:grid-cols-[1fr_1.4fr] lg:gap-16">
+      <div>
+        <h2 id="contact-title" class="text-4xl font-extrabold tracking-tight sm:text-5xl">{t.contactTitle}</h2>
+        <p class="mt-4 max-w-md text-lg text-mute">{t.contactText}</p>
+        <ul class="mt-8 flex flex-wrap gap-x-8 gap-y-3">
+          <li><a href={profile.linkedin} class="link-u">LinkedIn</a></li>
+          <li><a href={profile.github} class="link-u">GitHub</a></li>
+        </ul>
+      </div>
+      <div class="rounded-2xl border border-line bg-surface/80 p-6 backdrop-blur sm:p-8">
+        <ContactForm lang={lang} />
+      </div>
+    </div>
+  </section>
+</Base>

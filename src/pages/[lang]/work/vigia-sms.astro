@@ -1,0 +1,139 @@
+---
+import Base from "../../../layouts/Base.astro";
+import Status from "../../../components/Status.astro";
+import Stack from "../../../components/Stack.astro";
+import Browser from "../../../components/Browser.astro";
+import Phone from "../../../components/Phone.astro";
+import { type Lang, langs, ui } from "../../../data/i18n";
+import { apps } from "../../../data/profile";
+import { vigia } from "../../../data/vigia";
+
+export function getStaticPaths() {
+  return langs.map((lang) => ({ params: { lang } }));
+}
+
+const lang = Astro.params.lang as Lang;
+const t = ui[lang];
+const c = vigia[lang];
+const app = apps.find((a) => a.id === "vigia-sms")!;
+const a = app.text[lang];
+const gallery = [
+  {
+    src: "/projects/vigia-sms-indicators-desktop.webp",
+    url: "vigiasmspilot.vercel.app/indicadores",
+    alt: lang === "en" ? "Safety indicators with traffic lights and monthly trends" : "Indicadores de seguridad con semáforos y tendencias mensuales",
+  },
+  {
+    src: "/projects/vigia-sms-hazards-desktop.webp",
+    url: "vigiasmspilot.vercel.app/peligros",
+    alt: lang === "en" ? "Hazard register next to the ICAO risk matrix" : "Registro de peligros junto a la matriz de riesgo de la OACI",
+  },
+];
+---
+
+<Base lang={lang} path="work/vigia-sms/" title={c.title} description={c.description}>
+  <article>
+    <header class="relative isolate overflow-hidden">
+      <div aria-hidden="true" class="absolute -right-56 -top-72 -z-10 size-[56rem] rounded-full bg-[radial-gradient(circle,rgb(22_135_255/0.2)_0%,transparent_68%)]"></div>
+      <div class="wrap pb-14 pt-12 sm:pt-16">
+        <a href={`/${lang}/#apps`} class="link-u text-[0.9375rem]">{t.backHome}</a>
+        <div class="mt-8 flex flex-wrap items-center gap-3">
+          <h1 class="text-4xl font-extrabold tracking-[-0.03em] sm:text-6xl">{app.name}</h1>
+          <Status lang={lang} status="live" />
+        </div>
+        <p class="mt-5 max-w-[42ch] font-display text-xl font-semibold leading-snug text-white sm:text-2xl">{c.lead}</p>
+        <div class="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3">
+          <a href={app.demo} class="rounded-lg bg-electric px-5 py-3 font-semibold text-white transition-colors hover:bg-blue">{t.links.demo}</a>
+          <span class="text-sm text-mute">{t.codePrivate}</span>
+        </div>
+        <div class="mt-8"><Stack lang={lang} items={app.stack} /></div>
+      </div>
+      <div class="wrap pb-16">
+        <div class="stage">
+          <div class="relative pb-10 pr-8 sm:pr-14">
+            <Browser src={app.shot!.desktop!.src} alt={a.shotAlt!} width={1200} height={750} url="vigiasmspilot.vercel.app" eager />
+            <Phone src={app.shot!.mobile!.src} alt={c.mobileAlt} width={480} height={1039} eager class="absolute bottom-0 right-0 w-[20%] min-w-20" />
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <section class="border-t border-line py-16 lg:py-20">
+      <div class="wrap grid gap-8 lg:grid-cols-[1fr_2fr]">
+        <h2 class="text-2xl font-extrabold tracking-tight sm:text-3xl">{c.contextTitle}</h2>
+        <div class="max-w-[64ch] space-y-4 text-lg text-soft">
+          {c.context.map((p) => <p>{p}</p>)}
+        </div>
+      </div>
+    </section>
+
+    <section class="border-t border-line py-16 lg:py-20">
+      <div class="wrap grid gap-8 lg:grid-cols-[1fr_2fr]">
+        <h2 class="text-2xl font-extrabold tracking-tight sm:text-3xl">{c.modulesTitle}</h2>
+        <dl class="grid gap-x-10 gap-y-6 sm:grid-cols-2">
+          {
+            c.modules.map((m) => (
+              <div class="border-t border-line pt-4">
+                <dt class="font-display font-bold text-white">{m.name}</dt>
+                <dd class="mt-1 text-[0.9375rem] text-mute">{m.text}</dd>
+              </div>
+            ))
+          }
+        </dl>
+      </div>
+    </section>
+
+    <section class="border-t border-line bg-surface py-16 lg:py-20">
+      <div class="wrap">
+        <ul class="grid gap-10 md:grid-cols-2">
+          {
+            gallery.map((g) => (
+              <li>
+                <figure>
+                  <Browser src={g.src} alt={g.alt} width={1200} height={750} url={g.url} />
+                  <figcaption class="mt-4 text-sm text-mute">{g.alt}</figcaption>
+                </figure>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </section>
+
+    <section class="border-t border-line py-16 lg:py-20">
+      <div class="wrap grid gap-8 lg:grid-cols-[1fr_2fr]">
+        <h2 class="text-2xl font-extrabold tracking-tight sm:text-3xl">{c.decisionsTitle}</h2>
+        <div class="space-y-9">
+          {
+            c.decisions.map((d) => (
+              <div class="max-w-[64ch]">
+                <h3 class="text-lg font-bold">{d.title}</h3>
+                <p class="mt-2 text-soft">{d.text}</p>
+              </div>
+            ))
+          }
+        </div>
+      </div>
+    </section>
+
+    <section class="border-t border-line py-16 lg:py-20">
+      <div class="wrap grid gap-8 lg:grid-cols-[1fr_2fr]">
+        <h2 class="text-2xl font-extrabold tracking-tight sm:text-3xl">{c.nextTitle}</h2>
+        <div class="max-w-[64ch]">
+          <ol class="space-y-3">
+            {
+              c.next.map((n, i) => (
+                <li class="flex gap-4">
+                  <span class="font-display font-extrabold text-electric">{i + 1}</span>
+                  <span class="text-soft">{n}</span>
+                </li>
+              ))
+            }
+          </ol>
+          <p class="mt-8 rounded-lg border border-line bg-surface p-5 text-[0.9375rem] text-mute">{c.caveat}</p>
+          <a href={app.demo} class="mt-10 inline-block rounded-lg bg-electric px-5 py-3 font-semibold text-white transition-colors hover:bg-blue">{t.links.demo}</a>
+        </div>
+      </div>
+    </section>
+  </article>
+</Base>

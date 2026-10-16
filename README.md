@@ -27,9 +27,9 @@ El español se escribe aparte, como se diría en Chile; no es una traducción pa
 
 ### Agregar un proyecto
 
-1. Guarda las capturas en `public/projects/` como WebP: escritorio de 1440 × 800 y móvil de 390 × 693.
+1. Toma las capturas a 1440 × 900 (escritorio) y 390 × 844 (móvil, a 2x) y guárdalas en `public/projects/` como WebP: escritorio a 1200 px de ancho y móvil a 480 px, con los nombres `<id>-desktop.webp` y `<id>-mobile.webp`.
 2. Agrega el proyecto en `apps` o `websites` dentro de `src/data/profile.ts`, con su texto en `en` y `es`.
-3. Un sitio sin captura va en `alsoWebsites`, que se muestra como texto.
+3. Las capturas se muestran completas dentro de un marco de navegador o de celular (`Browser.astro` y `Phone.astro`); no se recortan.
 4. `npm run build && npm run check`.
 
 ## Estructura
@@ -38,7 +38,7 @@ El español se escribe aparte, como se diría en Chile; no es una traducción pa
 src/
   data/          contenido en inglés y español
   layouts/       Base.astro: <head>, SEO, hreflang y datos estructurados
-  components/    encabezado, pie, estado de cada app y lista de tecnologías
+  components/    encabezado, pie, marcos de captura, formulario de contacto, estado y tecnologías
   pages/
     index.astro          redirección por idioma
     [lang]/index.astro   página principal
@@ -51,6 +51,15 @@ scripts/check.mjs  revisión del sitio compilado
 ## Publicación
 
 Vercel detecta Astro sin configuración. Define la variable `SITE_URL` con la URL pública (por ejemplo `https://ricardomartinez.vercel.app`) para que las URL canónicas, `hreflang`, la imagen para redes y el sitemap salgan correctos.
+
+### Formulario de contacto
+
+El formulario envía los mensajes con [Web3Forms](https://web3forms.com) al correo de la cuenta. La clave de acceso está en `src/components/ContactForm.astro`; es pública por diseño, no es un secreto. Para cambiarla sin tocar el código, define en Vercel la variable `PUBLIC_WEB3FORMS_KEY`. Los mensajes llegan al correo con el que se creó la clave.
+
+## Documentación
+
+- `CHANGELOG.md`: cambios por versión.
+- `docs/proyecto.md`: decisiones, criterios de contenido, cómo rehacer las capturas y pendientes.
 
 ## Línea visual
 

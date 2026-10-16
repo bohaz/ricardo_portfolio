@@ -1,0 +1,29 @@
+---
+// La raíz envía a cada visitante a su idioma. Sin JavaScript, el meta refresh lleva a la versión en inglés.
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Ricardo Martínez, Full Stack Developer</title>
+    <meta name="robots" content="noindex" />
+    <link rel="alternate" hreflang="en" href="/en/" />
+    <link rel="alternate" hreflang="es" href="/es/" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <script is:inline>
+      var langs = navigator.languages || [navigator.language || "en"];
+      var es = langs.some(function (l) { return /^es\b/i.test(l); });
+      location.replace(es ? "/es/" : "/en/");
+    </script>
+    <meta http-equiv="refresh" content="0; url=/en/" />
+    <style>
+      body { margin: 0; background: #050816; color: #d6dbe6; font: 16px/1.6 system-ui, sans-serif; display: grid; place-items: center; min-height: 100vh; }
+      a { color: #1687ff; }
+    </style>
+  </head>
+  <body>
+    <p><a href="/en/">English</a> · <a href="/es/">Español</a></p>
+  </body>
+</html>
