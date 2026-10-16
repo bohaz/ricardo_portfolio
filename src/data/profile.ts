@@ -9,10 +9,19 @@ export const profile = {
 
 export type AppStatus = "live" | "private" | "dev" | "beta";
 
-export interface Shot {
-  desktop?: string;
-  mobile?: string;
+export interface Img {
+  src: string;
+  w: number;
+  h: number;
 }
+
+export interface Shot {
+  desktop?: Img;
+  mobile?: Img;
+}
+
+const desk = (name: string, h = 750): Img => ({ src: `/projects/${name}-desktop.webp`, w: 1200, h });
+const phone = (name: string, h = 1039): Img => ({ src: `/projects/${name}-mobile.webp`, w: 480, h });
 
 export interface App {
   id: string;
@@ -22,7 +31,7 @@ export interface App {
   stack: string[];
   demo?: string;
   caseStudy?: string;
-  /** Repositorio público; si no hay, se muestra que el código está disponible a pedido. */
+  /** Repositorio público; si no hay, se indica que el código está disponible a pedido. */
   code?: string;
   text: T<{ tagline: string; summary: string; points: string[]; shotAlt?: string }>;
 }
@@ -32,32 +41,34 @@ export const apps: App[] = [
     id: "vigia-sms",
     name: "Vigía SMS",
     status: ["live"],
-    shot: { desktop: "/projects/vigia-sms-desktop.webp", mobile: "/projects/vigia-sms-mobile.webp" },
-    stack: ["Next.js 15", "TypeScript", "Tailwind CSS", "Zustand", "Recharts"],
+    shot: { desktop: desk("vigia-sms"), mobile: phone("vigia-sms") },
+    stack: ["Next.js 15", "React 19", "TypeScript", "Tailwind CSS", "Zustand", "Recharts"],
     demo: "https://vigiasmspilot.vercel.app/",
     caseStudy: "work/vigia-sms/",
     text: {
       en: {
         tagline: "Safety Management System for airlines, built as a pilot",
         summary:
-          "A pilot that shows Venezuelan airline operators how to run their whole safety program in one place, following RAV 5 and ICAO Annex 19.",
+          "A pilot that shows Venezuelan airline operators how to run their whole safety program in one place, structured on RAV 5 and ICAO Annex 19.",
         points: [
           "Hazard register with initial and residual risk on the ICAO 5×5 matrix",
-          "Safety indicators with traffic-light thresholds and monthly trends",
+          "ASR and MOR reports with analysis status, authority notification and CSV export",
           "Corrective actions that can't be closed without evidence",
-          "Tamper-evident audit log chained with SHA-256, with an integrity check",
+          "Audit log chained with SHA-256, with an integrity check and a tamper simulation",
+          "Period report ready to print or save as PDF",
         ],
         shotAlt: "Vigía SMS safety dashboard with monthly indicators and the residual risk matrix",
       },
       es: {
         tagline: "Sistema de Gestión de Seguridad Operacional para aerolíneas, en versión piloto",
         summary:
-          "Un piloto que muestra a operadores aéreos venezolanos cómo llevar todo su programa de seguridad en un solo lugar, según la RAV 5 y el Anexo 19 de la OACI.",
+          "Un piloto que muestra a operadores aéreos venezolanos cómo llevar todo su programa de seguridad en un solo lugar, con la estructura de la RAV 5 y el Anexo 19 de la OACI.",
         points: [
           "Registro de peligros con riesgo inicial y residual en la matriz 5×5 de la OACI",
-          "Indicadores de seguridad con semáforos y tendencias mensuales",
+          "Reportes ASR y MOR con estado de análisis, notificación a la autoridad y exportación a CSV",
           "Acciones correctivas que no se pueden cerrar sin evidencia",
-          "Bitácora de auditoría encadenada con SHA-256, con verificación de integridad",
+          "Bitácora de auditoría encadenada con SHA-256, con verificación de integridad y simulación de manipulación",
+          "Informe del período listo para imprimir o guardar en PDF",
         ],
         shotAlt: "Panel de seguridad de Vigía SMS con los indicadores del mes y la matriz de riesgo residual",
       },
@@ -67,27 +78,34 @@ export const apps: App[] = [
     id: "pet-fashion-gestion",
     name: "Pet Fashion Gestión",
     status: ["private"],
-    stack: ["Next.js", "Supabase", "PostgreSQL", "PWA"],
+    shot: { mobile: phone("pet-fashion-gestion") },
+    stack: ["Next.js 15", "React 19", "TypeScript", "Tailwind CSS", "Supabase", "PostgreSQL", "PWA"],
     text: {
       en: {
-        tagline: "Internal management app for a grooming salon",
+        tagline: "The app that runs the grooming salon day to day",
         summary:
-          "The app we used for several months to keep client and visit records at the grooming salon I co-run. It's password-protected, so there is no public demo.",
+          "Appointments, dogs and business finances for the salon I co-run. We used it for a couple of months straight. It sits behind a login, so the screenshot uses sample data.",
         points: [
-          "Fixed a race condition in visit counts by moving the increment into a PostgreSQL function",
-          "Fixed dates that shifted by a day because of time-zone handling",
-          "Installs on the phone as an app (PWA)",
+          "Today view, day and month calendar, and a directory of dogs with their visits",
+          "Price and duration worked out from each dog's size and coat",
+          "WhatsApp messages ready to send for confirmations, reminders and review requests",
+          "Real-time sync between both users with Supabase Realtime and row-level security",
+          "Fixed monthly reports that moved records to the previous month because of the UTC offset",
         ],
+        shotAlt: "Pet Fashion Gestión on a phone: today's appointments with sample data",
       },
       es: {
-        tagline: "App interna de gestión para una peluquería canina",
+        tagline: "La app con la que llevamos la peluquería día a día",
         summary:
-          "La app que usamos durante varios meses para llevar el registro de clientes y visitas en la peluquería que codirijo. Tiene contraseña, así que no hay demo pública.",
+          "Citas, perros y finanzas del negocio de la peluquería que codirijo. La usamos durante un par de meses seguidos. Tiene inicio de sesión, así que la captura usa datos de ejemplo.",
         points: [
-          "Corregí un error en el conteo de visitas cuando llegaban dos registros a la vez, moviendo el incremento a una función de PostgreSQL",
-          "Corregí fechas que se corrían un día por la zona horaria",
-          "Se instala en el celular como una app (PWA)",
+          "Vista del día, agenda diaria y mensual, y un directorio de perros con sus visitas",
+          "Precio y duración calculados según la talla y el pelaje de cada perro",
+          "Mensajes de WhatsApp listos para confirmar, recordar la cita y pedir reseñas",
+          "Sincronización en tiempo real entre los dos usuarios con Supabase Realtime y seguridad por fila",
+          "Corregí informes mensuales que pasaban registros al mes anterior por el desfase horario con UTC",
         ],
+        shotAlt: "Pet Fashion Gestión en un celular: citas del día con datos de ejemplo",
       },
     },
   },
@@ -95,7 +113,7 @@ export const apps: App[] = [
     id: "arpegios",
     name: "Arpegios",
     status: ["beta", "dev"],
-    shot: { mobile: "/projects/arpegios-mobile.webp" },
+    shot: { mobile: phone("arpegios") },
     stack: ["React 19", "Vite", "Tailwind CSS", "Web Audio", "React Native", "Expo"],
     code: "https://github.com/bohaz/llanero-tonos",
     text: {
@@ -119,17 +137,22 @@ export const apps: App[] = [
     id: "de-luca-a-dolar",
     name: "De Luca a Dólar",
     status: ["dev"],
-    stack: ["React Native"],
+    shot: { mobile: phone("de-luca-a-dolar") },
+    stack: ["React Native", "Expo", "Expo Router", "EAS Build"],
     text: {
       en: {
-        tagline: "Currency converter for Android",
-        summary: "A currency conversion app built with React Native, in development for Google Play.",
+        tagline: "Chilean peso to US dollar converter for Android",
+        summary:
+          "Converts pesos to dollars with the observed rate published by Chile's Central Bank, read from the mindicador.cl API. It includes a chart of recent values and is set up with EAS to build for Google Play.",
         points: [],
+        shotAlt: "De Luca a Dólar on a phone converting 150,000 pesos with a sample rate",
       },
       es: {
-        tagline: "Conversor de monedas para Android",
-        summary: "Una app para convertir monedas hecha en React Native, en desarrollo para Google Play.",
+        tagline: "Conversor de pesos chilenos a dólares para Android",
+        summary:
+          "Convierte pesos a dólares con el dólar observado que publica el Banco Central, a través de la API de mindicador.cl. Incluye un gráfico de los últimos valores y está configurada con EAS para compilar para Google Play.",
         points: [],
+        shotAlt: "De Luca a Dólar en un celular convirtiendo 150.000 pesos con un valor de ejemplo",
       },
     },
   },
@@ -139,7 +162,7 @@ export interface Website {
   id: string;
   name: string;
   url: string;
-  shot?: Shot;
+  shot: Shot;
   text: T<{ kind: string; summary: string }>;
 }
 
@@ -148,7 +171,7 @@ export const websites: Website[] = [
     id: "tu-plan-digital",
     name: "Tu Plan Digital",
     url: "https://tuplandigital.cl/",
-    shot: { desktop: "/projects/tu-plan-digital-desktop.webp" },
+    shot: { desktop: desk("tu-plan-digital"), mobile: phone("tu-plan-digital") },
     text: {
       en: {
         kind: "My digital agency",
@@ -166,17 +189,23 @@ export const websites: Website[] = [
     id: "pet-fashion",
     name: "Pet Fashion Dog Salon",
     url: "https://petfashiondogsalon.cl/",
-    shot: { desktop: "/projects/pet-fashion-desktop.webp" },
+    shot: { desktop: desk("pet-fashion"), mobile: phone("pet-fashion") },
     text: {
-      en: { kind: "Grooming salon in Isla Negra, Chile", summary: "Public site with local SEO, a blog and WhatsApp booking." },
-      es: { kind: "Peluquería canina en Isla Negra", summary: "Sitio público con SEO local, blog y reservas por WhatsApp." },
+      en: {
+        kind: "Grooming salon in Isla Negra, Chile",
+        summary: "One-page site with services, prices by size, gallery, reviews and FAQ, with booking through WhatsApp.",
+      },
+      es: {
+        kind: "Peluquería canina en Isla Negra",
+        summary: "Sitio de una página con servicios, precios por talla, galería, reseñas y preguntas frecuentes, con reservas por WhatsApp.",
+      },
     },
   },
   {
     id: "katdoc",
     name: "Katdoc",
     url: "https://katdoc.com.ve/",
-    shot: { desktop: "/projects/katdoc-desktop.webp" },
+    shot: { desktop: desk("katdoc"), mobile: phone("katdoc") },
     text: {
       en: { kind: "Veterinary clinic in Puerto Ordaz, Venezuela", summary: "Site with WhatsApp appointment booking and production-ready SEO." },
       es: { kind: "Veterinaria en Puerto Ordaz, Venezuela", summary: "Sitio con agendamiento por WhatsApp y SEO listo para producción." },
@@ -186,7 +215,7 @@ export const websites: Website[] = [
     id: "limpia-fosas-pit",
     name: "Limpia Fosas PIT",
     url: "https://limpiafosaspit.cl/",
-    shot: { desktop: "/projects/limpia-fosas-pit-desktop.webp" },
+    shot: { desktop: desk("limpia-fosas-pit"), mobile: phone("limpia-fosas-pit") },
     text: {
       en: {
         kind: "Septic tank cleaning on Chile's Central Coast",
@@ -198,14 +227,11 @@ export const websites: Website[] = [
       },
     },
   },
-];
-
-/** Trabajo sin captura todavía: se lista aparte, como texto. */
-export const alsoWebsites: Website[] = [
   {
     id: "decero-leathers",
     name: "Decero Leathers Chile",
     url: "https://deceroleathers.cl/",
+    shot: { desktop: desk("decero-leathers", 537), mobile: phone("decero-leathers", 907) },
     text: {
       en: { kind: "Leather goods store", summary: "Theme customization for the brand's Jumpseller online store." },
       es: { kind: "Tienda de artículos de cuero", summary: "Personalización del tema de su tienda en línea en Jumpseller." },

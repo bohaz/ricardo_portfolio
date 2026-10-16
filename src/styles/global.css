@@ -54,16 +54,68 @@
   .wrap { width: 100%; max-width: 72rem; margin-inline: auto; padding-inline: 1.25rem; }
   @media (min-width: 640px) { .wrap { padding-inline: 2rem; } }
 
-  /* Capturas con marco oscuro y brillo azul tenue, el mismo formato de los Destacados. */
-  .shot {
-    display: block;
-    width: 100%;
-    height: auto;
-    border-radius: 0.625rem;
-    box-shadow: 0 0 0 4px var(--color-navy), 0 0 0 5px var(--color-line), 0 0 48px rgb(22 135 255 / 0.16);
-    background: var(--color-surface);
+  /* Marcos para capturas: ventana de navegador y celular. La imagen va completa adentro, sin recortes en los bordes. */
+  .frame {
+    background: #0b1128;
+    border: 1px solid #222b45;
+    box-shadow: 0 24px 60px -24px rgb(0 0 0 / 0.7), 0 0 48px rgb(22 135 255 / 0.12);
   }
-  .shot-phone { border-radius: 1rem; }
+  .frame img { display: block; width: 100%; height: auto; }
+  .frame-browser { border-radius: 0.75rem; overflow: hidden; }
+  .frame-bar {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    height: 1.75rem;
+    padding-inline: 0.75rem;
+    border-bottom: 1px solid #222b45;
+    overflow: hidden;
+  }
+  .frame-dots { display: flex; gap: 0.3rem; }
+  .frame-dots i { width: 0.45rem; height: 0.45rem; border-radius: 999px; background: #2c3654; }
+  .frame-url {
+    flex: 1;
+    min-width: 0;
+    max-width: 16rem;
+    margin-inline: auto;
+    padding: 0.05rem 0.6rem;
+    border-radius: 999px;
+    background: #121a36;
+    color: #7d879e;
+    font-size: 0.6875rem;
+    line-height: 1.25rem;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .frame-phone { border-radius: 1.6rem; padding: 0.4rem; }
+  .frame-phone img { border-radius: 1.2rem; }
+
+  /* Panel que rodea las capturas y les da aire. */
+  .stage {
+    border-radius: 1rem;
+    background:
+      radial-gradient(120% 90% at 100% 0%, rgb(22 135 255 / 0.14), transparent 60%),
+      var(--color-raised);
+    border: 1px solid var(--color-line);
+    padding: 1.25rem;
+  }
+  @media (min-width: 640px) { .stage { padding: 1.75rem; } }
+
+  .field {
+    width: 100%;
+    border-radius: 0.5rem;
+    border: 1px solid #27304b;
+    background: var(--color-surface);
+    color: #fff;
+    padding: 0.75rem 0.9rem;
+    font-size: 1rem;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  .field::placeholder { color: #6f7990; }
+  .field:hover { border-color: #36405e; }
+  .field:focus { outline: none; border-color: var(--color-electric); box-shadow: 0 0 0 3px rgb(22 135 255 / 0.25); }
 
   .link-u {
     color: var(--color-electric);

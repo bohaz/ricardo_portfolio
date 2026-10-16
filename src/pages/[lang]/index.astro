@@ -2,8 +2,11 @@
 import Base from "../../layouts/Base.astro";
 import Status from "../../components/Status.astro";
 import Stack from "../../components/Stack.astro";
+import Browser from "../../components/Browser.astro";
+import Phone from "../../components/Phone.astro";
+import ContactForm from "../../components/ContactForm.astro";
 import { type Lang, langs, ui } from "../../data/i18n";
-import { alsoWebsites, apps, education, experience, languages, principles, profile, websites } from "../../data/profile";
+import { apps, education, experience, languages, principles, profile, websites } from "../../data/profile";
 import { vigia } from "../../data/vigia";
 import { host, monthYear } from "../../lib/format";
 
@@ -14,11 +17,13 @@ export function getStaticPaths() {
 const lang = Astro.params.lang as Lang;
 const t = ui[lang];
 const [featured, ...otherApps] = apps;
-// Las apps con detalle o captura van en tarjetas; las que solo tienen una descripción breve, en una fila.
-const isMajor = (app: (typeof apps)[number]) => app.text[lang].points.length > 0 || Boolean(app.shot);
-const majorApps = otherApps.filter(isMajor);
-const minorApps = otherApps.filter((app) => !isMajor(app));
 const f = featured.text[lang];
+// Las apps con detalle van destacadas a lo ancho; las demás, en tarjetas de a dos.
+const majorApps = otherApps.filter((app) => app.text[lang].points.length > 0);
+const minorApps = otherApps.filter((app) => app.text[lang].points.length === 0);
+const hazards = { src: "/projects/vigia-sms-hazards-desktop.webp", w: 1200, h: 750 };
+// Con un número impar de sitios, el último ocupa el ancho completo.
+const wideLast = websites.length % 2 === 1;
 const hazardsAlt =
   lang === "en"
     ? "Vigía SMS hazard register next to the ICAO risk matrix"
@@ -38,7 +43,7 @@ const orgName =(org: string | Record<Lang, string>) => (typeof org === "string" 
         <p class="mt-6 max-w-[60ch] text-lg leading-relaxed text-mute">{t.heroLead}</p>
         <div class="mt-9 flex flex-wrap items-center gap-3">
           <a href="#apps" class="rounded-lg bg-electric px-5 py-3 font-semibold text-white transition-colors hover:bg-blue">{t.heroCta}</a>
-          <a href={`mailto:${profile.email}`} class="rounded-lg border border-line px-5 py-3 font-semibold text-white transition-colors hover:border-electric">{t.heroEmail}</a>
+          <a href="#contact" class="rounded-lg border border-line px-5 py-3 font-semibold text-white transition-colors hover:border-electric">{t.heroEmail}</a>
           <a href={profile.github} class="px-2 py-3 font-semibold text-mute transition-colors hover:text-white">GitHub</a>
         </div>
         <p class="mt-8 flex items-start gap-3 text-[0.9375rem] text-mute">
@@ -47,23 +52,10 @@ const orgName =(org: string | Record<Lang, string>) => (typeof org === "string" 
         </p>
       </div>
 
-      <figure class="relative">
-        <div class="relative pb-10 pr-6 sm:pr-10">
-          <img
-            src={featured.shot!.desktop}
-            alt={f.shotAlt}
-            width="1440"
-            height="800"
-            fetchpriority="high"
-            class="shot"
-          />
-          <img
-            src={featured.shot!.mobile}
-            alt=""
-            width="390"
-            height="693"
-            class="shot shot-phone absolute bottom-0 right-0 w-[24%] min-w-24"
-          />
+      <figure>
+        <div class="relative pb-8 pr-8 sm:pb-10 sm:pr-12">
+          <Browser src={featured.shot!.desktop!.src} alt={f.shotAlt!} width={1200} height={750} url="vigiasmspilot.vercel.app" eager />
+          <Phone src={featured.shot!.mobile!.src} alt="" width={480} height={1039} eager class="absolute bottom-0 right-0 w-[22%] min-w-20" />
         </div>
         <figcaption class="mt-5 text-sm text-mute">
           <a href={featured.demo} class="link-u">{t.heroShot}</a>
@@ -81,13 +73,15 @@ const orgName =(org: string | Record<Lang, string>) => (typeof org === "string" 
       </div>
 
       <article class="mt-12 grid gap-10 rounded-2xl border border-line bg-surface p-6 sm:p-10 lg:grid-cols-[1.15fr_1fr] lg:gap-14">
-        <div class="order-2 lg:order-1">
-          <div class="relative pb-8 pr-8">
-            <img src="/projects/vigia-sms-hazards-desktop.webp" alt={hazardsAlt} width="1440" height="800" loading="lazy" class="shot" />
-            <img src={featured.shot!.mobile} alt={vigia[lang].mobileAlt} width="390" height="693" loading="lazy" class="shot shot-phone absolute bottom-0 right-0 w-[26%]" />
+        <div class="order-2 min-w-0 self-start lg:order-1">
+          <div class="stage">
+            <div class="relative pb-8 pr-8">
+              <Browser src={hazards.src} alt={hazardsAlt} width={hazards.w} height={hazards.h} url="vigiasmspilot.vercel.app/peligros" />
+              <Phone src={featured.shot!.mobile!.src} alt={vigia[lang].mobileAlt} width={480} height={1039} class="absolute bottom-0 right-0 w-[24%] min-w-20" />
+            </div>
           </div>
         </div>
-        <div class="order-1 lg:order-2">
+        <div class="order-1 min-w-0 lg:order-2">
           <div class="flex flex-wrap items-center gap-3">
             <h3 class="text-2xl font-extrabold tracking-tight sm:text-3xl">{featured.name}</h3>
             {featured.status.map((s) => <Status lang={lang} status={s} />)}
@@ -113,12 +107,54 @@ const orgName =(org: string | Record<Lang, string>) => (typeof org === "string" 
         </div>
       </article>
 
+      {
+        majorApps.map((app) => {
+          const a = app.text[lang];
+          return (
+            <article class="mt-6 grid gap-10 rounded-2xl border border-line p-6 sm:p-10 lg:grid-cols-[1fr_1.15fr] lg:gap-14">
+              <div>
+                <div class="flex flex-wrap items-center gap-3">
+                  <h3 class="text-2xl font-extrabold tracking-tight sm:text-3xl">{app.name}</h3>
+                  {app.status.map((s) => <Status lang={lang} status={s} />)}
+                </div>
+                <p class="mt-2 font-display text-lg font-semibold text-white">{a.tagline}</p>
+                <p class="mt-4 text-mute">{a.summary}</p>
+                <ul class="mt-6 space-y-3">
+                  {a.points.map((p) => (
+                    <li class="flex gap-3">
+                      <span aria-hidden="true" class="mt-[0.6rem] size-1.5 shrink-0 bg-cyan" />
+                      <span>{p}</span>
+                    </li>
+                  ))}
+                </ul>
+                <div class="mt-7"><Stack lang={lang} items={app.stack} /></div>
+                {app.code ? (
+                  <a href={app.code} class="link-u mt-6 inline-block">{t.links.code}</a>
+                ) : (
+                  <p class="mt-6 text-sm text-mute">{t.codePrivate}</p>
+                )}
+              </div>
+              {app.shot?.mobile && (
+                <div class="stage flex items-center justify-center self-start !py-10">
+                  <Phone src={app.shot.mobile.src} alt={a.shotAlt ?? ""} width={app.shot.mobile.w} height={app.shot.mobile.h} class="w-48 sm:w-56" />
+                </div>
+              )}
+            </article>
+          );
+        })
+      }
+
       <div class="mt-6 grid gap-6 lg:grid-cols-2">
         {
-          majorApps.map((app) => {
+          minorApps.map((app) => {
             const a = app.text[lang];
             return (
-              <article class="flex flex-col gap-6 rounded-2xl border border-line p-6 sm:flex-row sm:p-8">
+              <article class="flex flex-col gap-6 rounded-2xl border border-line p-5 sm:flex-row sm:p-6">
+                {app.shot?.mobile && (
+                  <div class="stage flex shrink-0 items-center justify-center !p-5 sm:w-48">
+                    <Phone src={app.shot.mobile.src} alt={a.shotAlt ?? ""} width={app.shot.mobile.w} height={app.shot.mobile.h} class="w-36" />
+                  </div>
+                )}
                 <div class="flex min-w-0 flex-1 flex-col">
                   <h3 class="text-xl font-extrabold tracking-tight">{app.name}</h3>
                   <div class="mt-3 flex flex-wrap gap-2">
@@ -126,61 +162,20 @@ const orgName =(org: string | Record<Lang, string>) => (typeof org === "string" 
                   </div>
                   <p class="mt-4 font-display font-semibold text-white">{a.tagline}</p>
                   <p class="mt-2 text-[0.9375rem] text-mute">{a.summary}</p>
-                  {a.points.length > 0 && (
-                    <ul class="mt-4 space-y-2 text-[0.9375rem]">
-                      {a.points.map((p) => (
-                        <li class="flex gap-3">
-                          <span aria-hidden="true" class="mt-[0.55rem] size-1.5 shrink-0 bg-cyan" />
-                          <span>{p}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  )}
                   <div class="mt-auto pt-6">
                     <Stack lang={lang} items={app.stack} />
-                    {app.code && (
-                      <a href={app.code} class="link-u mt-4 inline-block text-[0.9375rem]">
-                        {t.links.code}
-                      </a>
+                    {app.code ? (
+                      <a href={app.code} class="link-u mt-4 inline-block text-[0.9375rem]">{t.links.code}</a>
+                    ) : (
+                      <p class="mt-4 text-sm text-mute">{t.codePrivate}</p>
                     )}
                   </div>
                 </div>
-                {app.shot?.mobile && (
-                  <img
-                    src={app.shot.mobile}
-                    alt={a.shotAlt}
-                    width="390"
-                    height="693"
-                    loading="lazy"
-                    class="shot shot-phone mx-auto w-40 shrink-0 self-center sm:mx-0 sm:w-36 lg:w-40"
-                  />
-                )}
               </article>
             );
           })
         }
       </div>
-
-      {
-        minorApps.length > 0 && (
-          <ul class="mt-6 divide-y divide-line rounded-2xl border border-line">
-            {minorApps.map((app) => {
-              const a = app.text[lang];
-              return (
-                <li class="flex flex-col gap-3 p-6 sm:flex-row sm:items-center sm:gap-6 sm:px-8">
-                  <h3 class="text-lg font-extrabold tracking-tight sm:w-48 sm:shrink-0">{app.name}</h3>
-                  <p class="flex-1 text-[0.9375rem] text-mute">
-                    <span class="font-semibold text-white">{a.tagline}.</span> {a.summary}
-                  </p>
-                  <div class="flex flex-wrap gap-2">
-                    {app.status.map((s) => <Status lang={lang} status={s} />)}
-                  </div>
-                </li>
-              );
-            })}
-          </ul>
-        )
-      }
     </div>
   </section>
 
@@ -191,46 +186,34 @@ const orgName =(org: string | Record<Lang, string>) => (typeof org === "string" 
         <h2 id="websites-title" class="text-3xl font-extrabold tracking-tight sm:text-[2.5rem]">{t.websitesTitle}</h2>
         <p class="mt-3 text-lg text-mute">{t.websitesIntro}</p>
       </div>
-      <ul class="mt-12 grid gap-x-10 gap-y-14 md:grid-cols-2">
+      <ul class="mt-12 grid gap-x-8 gap-y-14 md:grid-cols-2">
         {
-          websites.map((w) => {
+          websites.map((w, i) => {
             const s = w.text[lang];
+            const wide = wideLast && i === websites.length - 1;
+            const d = w.shot.desktop!;
+            const m = w.shot.mobile!;
             return (
-              <li>
-                <a href={w.url} class="group block">
-                  <img
-                    src={w.shot!.desktop}
-                    alt=""
-                    width="960"
-                    height="426"
-                    loading="lazy"
-                    class="shot aspect-[1440/720] object-cover object-top transition-[box-shadow] group-hover:shadow-[0_0_0_4px_var(--color-navy),0_0_0_5px_var(--color-electric),0_0_48px_rgb(22_135_255/0.25)]"
-                  />
-                  <h3 class="mt-6 text-xl font-extrabold tracking-tight group-hover:text-cyan">{w.name}</h3>
+              <li class:list={[wide && "md:col-span-2 md:grid md:grid-cols-[1.35fr_1fr] md:items-center md:gap-10"]}>
+                <a href={w.url} class="group block rounded-2xl" aria-label={`${w.name}, ${host(w.url)}`}>
+                  <div class="stage flex items-end gap-4 transition-[border-color] group-hover:border-electric/60 sm:gap-5">
+                    <Browser src={d.src} alt="" width={d.w} height={d.h} url={host(w.url)} class="min-w-0 flex-1" />
+                    <Phone src={m.src} alt="" width={m.w} height={m.h} class={wide ? "w-[19%] shrink-0" : "w-[24%] shrink-0"} />
+                  </div>
                 </a>
-                <p class="mt-1 text-[0.9375rem] font-medium text-soft">{s.kind}</p>
-                <p class="mt-2 text-[0.9375rem] text-mute">{s.summary}</p>
-                <a href={w.url} class="link-u mt-3 inline-block text-[0.9375rem]">{host(w.url)}</a>
+                <div class:list={["mt-6", wide && "md:mt-0"]}>
+                  <h3 class="text-xl font-extrabold tracking-tight">
+                    <a href={w.url} class="hover:text-cyan">{w.name}</a>
+                  </h3>
+                  <p class="mt-1 text-[0.9375rem] font-medium text-soft">{s.kind}</p>
+                  <p class="mt-2 text-[0.9375rem] text-mute">{s.summary}</p>
+                  <a href={w.url} class="link-u mt-3 inline-block text-[0.9375rem]">{host(w.url)}</a>
+                </div>
               </li>
             );
           })
         }
       </ul>
-      {
-        alsoWebsites.length > 0 && (
-          <div class="mt-14 border-t border-line pt-8">
-            <h3 class="text-base font-bold text-white">{t.also}</h3>
-            <ul class="mt-3 space-y-2">
-              {alsoWebsites.map((w) => (
-                <li class="text-[0.9375rem] text-mute">
-                  <a href={w.url} class="link-u">{w.name}</a>
-                  <span>, {w.text[lang].kind.toLowerCase()}. {w.text[lang].summary}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-        )
-      }
     </div>
   </section>
 
@@ -306,19 +289,18 @@ const orgName =(org: string | Record<Lang, string>) => (typeof org === "string" 
   <!-- Contacto -->
   <section id="contact" aria-labelledby="contact-title" class="relative isolate overflow-hidden border-t border-line py-24 lg:py-32">
     <div aria-hidden="true" class="absolute -bottom-96 -left-56 -z-10 size-[52rem] rounded-full bg-[radial-gradient(circle,rgb(22_135_255/0.18)_0%,transparent_65%)]"></div>
-    <div class="wrap">
-      <h2 id="contact-title" class="text-4xl font-extrabold tracking-tight sm:text-5xl">{t.contactTitle}</h2>
-      <p class="mt-4 max-w-xl text-lg text-mute">{t.contactText}</p>
-      <a
-        href={`mailto:${profile.email}`}
-        class="mt-8 inline-block break-all font-display text-2xl font-extrabold tracking-tight text-white underline decoration-electric decoration-2 underline-offset-8 transition-colors hover:text-cyan sm:text-4xl"
-      >
-        {profile.email}
-      </a>
-      <ul class="mt-10 flex flex-wrap gap-x-8 gap-y-3">
-        <li><a href={profile.linkedin} class="link-u">LinkedIn</a></li>
-        <li><a href={profile.github} class="link-u">GitHub</a></li>
-      </ul>
+    <div class="wrap grid gap-12 lg:grid-cols-[1fr_1.4fr] lg:gap-16">
+      <div>
+        <h2 id="contact-title" class="text-4xl font-extrabold tracking-tight sm:text-5xl">{t.contactTitle}</h2>
+        <p class="mt-4 max-w-md text-lg text-mute">{t.contactText}</p>
+        <ul class="mt-8 flex flex-wrap gap-x-8 gap-y-3">
+          <li><a href={profile.linkedin} class="link-u">LinkedIn</a></li>
+          <li><a href={profile.github} class="link-u">GitHub</a></li>
+        </ul>
+      </div>
+      <div class="rounded-2xl border border-line bg-surface/80 p-6 backdrop-blur sm:p-8">
+        <ContactForm lang={lang} />
+      </div>
     </div>
   </section>
 </Base>

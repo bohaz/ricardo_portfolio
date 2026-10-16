@@ -2,6 +2,8 @@
 import Base from "../../../layouts/Base.astro";
 import Status from "../../../components/Status.astro";
 import Stack from "../../../components/Stack.astro";
+import Browser from "../../../components/Browser.astro";
+import Phone from "../../../components/Phone.astro";
 import { type Lang, langs, ui } from "../../../data/i18n";
 import { apps } from "../../../data/profile";
 import { vigia } from "../../../data/vigia";
@@ -18,10 +20,12 @@ const a = app.text[lang];
 const gallery = [
   {
     src: "/projects/vigia-sms-indicators-desktop.webp",
+    url: "vigiasmspilot.vercel.app/indicadores",
     alt: lang === "en" ? "Safety indicators with traffic lights and monthly trends" : "Indicadores de seguridad con semáforos y tendencias mensuales",
   },
   {
     src: "/projects/vigia-sms-hazards-desktop.webp",
+    url: "vigiasmspilot.vercel.app/peligros",
     alt: lang === "en" ? "Hazard register next to the ICAO risk matrix" : "Registro de peligros junto a la matriz de riesgo de la OACI",
   },
 ];
@@ -45,9 +49,11 @@ const gallery = [
         <div class="mt-8"><Stack lang={lang} items={app.stack} /></div>
       </div>
       <div class="wrap pb-16">
-        <div class="relative pb-10 pr-6 sm:pr-12">
-          <img src={app.shot!.desktop} alt={a.shotAlt} width="1440" height="800" fetchpriority="high" class="shot" />
-          <img src={app.shot!.mobile} alt={c.mobileAlt} width="390" height="693" class="shot shot-phone absolute bottom-0 right-0 w-[22%] min-w-24" />
+        <div class="stage">
+          <div class="relative pb-10 pr-8 sm:pr-14">
+            <Browser src={app.shot!.desktop!.src} alt={a.shotAlt!} width={1200} height={750} url="vigiasmspilot.vercel.app" eager />
+            <Phone src={app.shot!.mobile!.src} alt={c.mobileAlt} width={480} height={1039} eager class="absolute bottom-0 right-0 w-[20%] min-w-20" />
+          </div>
         </div>
       </div>
     </header>
@@ -84,7 +90,7 @@ const gallery = [
             gallery.map((g) => (
               <li>
                 <figure>
-                  <img src={g.src} alt={g.alt} width="1440" height="800" loading="lazy" class="shot" />
+                  <Browser src={g.src} alt={g.alt} width={1200} height={750} url={g.url} />
                   <figcaption class="mt-4 text-sm text-mute">{g.alt}</figcaption>
                 </figure>
               </li>

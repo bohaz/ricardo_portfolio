@@ -15,7 +15,7 @@ const { lang } = Astro.props;
     <ul class="flex gap-5">
       <li><a class="hover:text-white" href={profile.github}>GitHub</a></li>
       <li><a class="hover:text-white" href={profile.linkedin}>LinkedIn</a></li>
-      <li><a class="hover:text-white" href={`mailto:${profile.email}`}>Email</a></li>
+      <li><a class="hover:text-white" href={`/${lang}/#contact`}>{ui[lang].nav.contact}</a></li>
     </ul>
   </div>
 </footer>
