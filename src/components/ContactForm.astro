@@ -8,8 +8,9 @@ interface Props {
 
 const { lang } = Astro.props;
 const f = ui[lang].form;
-// Clave pública de Web3Forms (se configura en Vercel). Sin clave, el formulario abre el correo con el mensaje ya escrito.
-const accessKey = import.meta.env.PUBLIC_WEB3FORMS_KEY ?? "";
+// Clave de acceso de Web3Forms. Es pública por diseño (va en el HTML de cualquier formulario de Web3Forms).
+// Se puede reemplazar con la variable PUBLIC_WEB3FORMS_KEY en Vercel. Sin clave, el formulario abre el correo con el mensaje ya escrito.
+const accessKey = import.meta.env.PUBLIC_WEB3FORMS_KEY || "1e6e58a4-607a-411e-8781-26fb46d547fb";
 ---
 
 <form

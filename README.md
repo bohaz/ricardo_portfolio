@@ -54,7 +54,7 @@ Vercel detecta Astro sin configuración. Define la variable `SITE_URL` con la UR
 
 ### Formulario de contacto
 
-El formulario envía los mensajes con [Web3Forms](https://web3forms.com) al correo de la cuenta. Define en Vercel la variable `PUBLIC_WEB3FORMS_KEY` con la clave de acceso (es pública por diseño, no es un secreto) y vuelve a publicar. Sin la variable, el botón abre el programa de correo con el mensaje ya escrito.
+El formulario envía los mensajes con [Web3Forms](https://web3forms.com) al correo de la cuenta. La clave de acceso está en `src/components/ContactForm.astro`; es pública por diseño, no es un secreto. Para cambiarla sin tocar el código, define en Vercel la variable `PUBLIC_WEB3FORMS_KEY`. Los mensajes llegan al correo con el que se creó la clave.
 
 ## Línea visual
 
