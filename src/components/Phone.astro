@@ -1,0 +1,17 @@
+---
+/** Captura de celular con su marco: la pantalla completa queda dentro, con margen parejo. */
+interface Props {
+  src: string;
+  alt: string;
+  width: number;
+  height: number;
+  eager?: boolean;
+  class?: string;
+}
+
+const { src, alt, width, height, eager = false, class: className } = Astro.props;
+---
+
+<div class:list={["frame frame-phone", className]}>
+  <img src={src} alt={alt} width={width} height={height} loading={eager ? "eager" : "lazy"} decoding="async" />
+</div>

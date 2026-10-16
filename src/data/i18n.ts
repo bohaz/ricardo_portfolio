@@ -1,0 +1,108 @@
+export const langs = ["en", "es"] as const;
+export type Lang = (typeof langs)[number];
+
+/** Texto en los dos idiomas. El español se escribe aparte, no se traduce palabra por palabra. */
+export type T<V = string> = Record<Lang, V>;
+
+export const otherLang = (lang: Lang): Lang => (lang === "en" ? "es" : "en");
+
+export const ui = {
+  en: {
+    metaTitle: "Ricardo Martínez, Full Stack Developer",
+    metaDescription:
+      "Full Stack Developer (React, TypeScript, Next.js, Node.js, Ruby on Rails, PostgreSQL). Veterinarian turned engineer who builds software for real businesses. Open to remote roles.",
+    skip: "Skip to content",
+    nav: { apps: "Apps", websites: "Websites", experience: "Experience", contact: "Contact" },
+    switchTo: "Español",
+    switchLabel: "Ver este sitio en español",
+    heroTitle: "Full Stack Developer building software for real businesses.",
+    heroLead:
+      "I'm Ricardo Martínez. Before I wrote code, I was a veterinarian running livestock operations in Venezuela, and I still co-run a dog-grooming salon in Chile. I build with React, TypeScript, Next.js, Node.js, Ruby on Rails and PostgreSQL, and I start every project by asking what the business needs to achieve.",
+    heroCta: "See my work",
+    heroEmail: "Email me",
+    heroStatus: "Open to remote full-time or contract roles. Based in Chile (UTC−3).",
+    heroShot: "Vigía SMS, a live demo with sample data",
+    appsTitle: "Apps",
+    appsIntro: "Products with real data, business rules and tests.",
+    websitesTitle: "Websites",
+    websitesIntro: "Sites for small businesses, most of them built through Tu Plan Digital, my digital agency.",
+    also: "Also",
+    howTitle: "How I work",
+    experienceTitle: "Experience",
+    educationTitle: "Education",
+    languagesTitle: "Languages",
+    present: "Present",
+    contactTitle: "Let's talk",
+    contactText:
+      "I'm open to remote Full Stack roles, full-time or contract. Tell me about the role or the project and I'll get back to you by email.",
+    form: {
+      name: "Name",
+      email: "Email",
+      company: "Company",
+      optional: "optional",
+      message: "Message",
+      placeholder: "The role, the team or the project you have in mind",
+      send: "Send message",
+      sending: "Sending…",
+      ok: "Thanks, your message is on its way. I'll reply soon.",
+      error: "It didn't go through. Please try again in a moment, or write to ricardomartinezvet@gmail.com.",
+      invalid: "Please fill in your name, a valid email and a message.",
+      subject: "New message from your portfolio",
+    },
+    status: { live: "Live demo", private: "Private app", dev: "In development", beta: "Web beta" },
+    links: { demo: "Open live demo", site: "Visit site", case: "Read case study", code: "Code" },
+    codePrivate: "Code available on request",
+    stack: "Stack",
+    footer: "Built with Astro and Tailwind CSS.",
+    backHome: "Back to all projects",
+  },
+  es: {
+    metaTitle: "Ricardo Martínez, desarrollador Full Stack",
+    metaDescription:
+      "Desarrollador Full Stack (React, TypeScript, Next.js, Node.js, Ruby on Rails, PostgreSQL). Médico veterinario que construye software para negocios reales. Disponible para cargos remotos.",
+    skip: "Ir al contenido",
+    nav: { apps: "Apps", websites: "Sitios web", experience: "Experiencia", contact: "Contacto" },
+    switchTo: "English",
+    switchLabel: "View this site in English",
+    heroTitle: "Desarrollador Full Stack que construye software para negocios reales.",
+    heroLead:
+      "Soy Ricardo Martínez. Antes de programar fui médico veterinario y dirigí la operación de fincas ganaderas en Venezuela, y hoy codirijo una peluquería canina en Chile. Trabajo con React, TypeScript, Next.js, Node.js, Ruby on Rails y PostgreSQL, y parto cada proyecto entendiendo qué necesita lograr el negocio.",
+    heroCta: "Ver proyectos",
+    heroEmail: "Escríbeme",
+    heroStatus: "Disponible para cargos remotos, de jornada completa o por proyecto. Trabajo desde Chile (UTC−3).",
+    heroShot: "Vigía SMS, demo en línea con datos de ejemplo",
+    appsTitle: "Apps",
+    appsIntro: "Productos con datos reales, reglas de negocio y pruebas.",
+    websitesTitle: "Sitios web",
+    websitesIntro: "Sitios para pequeños negocios, la mayoría hechos con Tu Plan Digital, mi agencia digital.",
+    also: "También",
+    howTitle: "Cómo trabajo",
+    experienceTitle: "Experiencia",
+    educationTitle: "Formación",
+    languagesTitle: "Idiomas",
+    present: "Actualidad",
+    contactTitle: "Conversemos",
+    contactText:
+      "Estoy disponible para cargos Full Stack remotos, de jornada completa o por proyecto. Cuéntame del cargo o del proyecto y te respondo por correo.",
+    form: {
+      name: "Nombre",
+      email: "Correo",
+      company: "Empresa",
+      optional: "opcional",
+      message: "Mensaje",
+      placeholder: "El cargo, el equipo o el proyecto que tienes en mente",
+      send: "Enviar mensaje",
+      sending: "Enviando…",
+      ok: "Gracias, tu mensaje ya llegó. Te respondo pronto.",
+      error: "No se pudo enviar. Inténtalo de nuevo en un momento o escríbeme a ricardomartinezvet@gmail.com.",
+      invalid: "Completa tu nombre, un correo válido y el mensaje.",
+      subject: "Nuevo mensaje desde tu portafolio",
+    },
+    status: { live: "Demo en línea", private: "App privada", dev: "En desarrollo", beta: "Versión web beta" },
+    links: { demo: "Abrir la demo", site: "Ver sitio", case: "Leer el caso", code: "Código" },
+    codePrivate: "Código disponible si lo solicitas",
+    stack: "Tecnologías",
+    footer: "Hecho con Astro y Tailwind CSS.",
+    backHome: "Volver a todos los proyectos",
+  },
+} satisfies T<Record<string, unknown>>;

@@ -1,0 +1,109 @@
+---
+import { type Lang, ui } from "../data/i18n";
+import { profile } from "../data/profile";
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const f = ui[lang].form;
+// Clave de acceso de Web3Forms. Es pública por diseño (va en el HTML de cualquier formulario de Web3Forms).
+// Se puede reemplazar con la variable PUBLIC_WEB3FORMS_KEY en Vercel. Sin clave, el formulario abre el correo con el mensaje ya escrito.
+const accessKey = import.meta.env.PUBLIC_WEB3FORMS_KEY || "1e6e58a4-607a-411e-8781-26fb46d547fb";
+---
+
+<form
+  id="contact-form"
+  class="grid gap-5 sm:grid-cols-2"
+  action="https://api.web3forms.com/submit"
+  method="POST"
+  novalidate
+  data-key={accessKey}
+  data-email={profile.email}
+  data-subject={f.subject}
+  data-sending={f.sending}
+  data-ok={f.ok}
+  data-error={f.error}
+  data-invalid={f.invalid}
+>
+  <div>
+    <label for="cf-name" class="mb-2 block text-sm font-semibold text-white">{f.name}</label>
+    <input id="cf-name" name="name" type="text" autocomplete="name" required maxlength="120" class="field" />
+  </div>
+  <div>
+    <label for="cf-email" class="mb-2 block text-sm font-semibold text-white">{f.email}</label>
+    <input id="cf-email" name="email" type="email" autocomplete="email" required maxlength="160" class="field" />
+  </div>
+  <div class="sm:col-span-2">
+    <label for="cf-company" class="mb-2 block text-sm font-semibold text-white">
+      {f.company} <span class="font-normal text-mute">({f.optional})</span>
+    </label>
+    <input id="cf-company" name="company" type="text" autocomplete="organization" maxlength="160" class="field" />
+  </div>
+  <div class="sm:col-span-2">
+    <label for="cf-message" class="mb-2 block text-sm font-semibold text-white">{f.message}</label>
+    <textarea id="cf-message" name="message" rows="5" required maxlength="4000" class="field resize-y" placeholder={f.placeholder}></textarea>
+  </div>
+  <!-- Campo trampa para bots: las personas no lo ven. -->
+  <input type="checkbox" name="botcheck" class="hidden" tabindex="-1" autocomplete="off" aria-hidden="true" />
+  <div class="flex flex-col gap-4 sm:col-span-2 sm:flex-row sm:items-center">
+    <button
+      type="submit"
+      class="rounded-lg bg-electric px-6 py-3 font-semibold text-white transition-colors hover:bg-blue disabled:cursor-wait disabled:opacity-70"
+    >
+      {f.send}
+    </button>
+    <p id="cf-status" role="status" aria-live="polite" class="text-[0.9375rem] text-mute"></p>
+  </div>
+</form>
+
+<script>
+  const form = document.getElementById("contact-form") as HTMLFormElement | null;
+  const status = document.getElementById("cf-status");
+
+  if (form && status) {
+    const d = form.dataset;
+    const button = form.querySelector<HTMLButtonElement>("button[type=submit]")!;
+    const say = (text: string, tone: "mute" | "ok" | "error") => {
+      status.textContent = text;
+      status.className = `text-[0.9375rem] ${tone === "ok" ? "text-cyan" : tone === "error" ? "text-[#ff8a8a]" : "text-mute"}`;
+    };
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      if (!form.checkValidity()) {
+        say(d.invalid!, "error");
+        form.querySelector<HTMLElement>(":invalid")?.focus();
+        return;
+      }
+      const data = new FormData(form);
+      if (data.get("botcheck")) return;
+
+      // Sin clave configurada: se abre el correo con todo ya escrito.
+      if (!d.key) {
+        const body = `${data.get("message")}\n\n${data.get("name")}${data.get("company") ? ` (${data.get("company")})` : ""}\n${data.get("email")}`;
+        window.location.href = `mailto:${d.email}?subject=${encodeURIComponent(d.subject!)}&body=${encodeURIComponent(body)}`;
+        return;
+      }
+
+      data.set("access_key", d.key);
+      data.set("subject", d.subject!);
+      data.set("from_name", String(data.get("name")));
+      data.delete("botcheck");
+      button.disabled = true;
+      say(d.sending!, "mute");
+      try {
+        const res = await fetch(form.action, { method: "POST", headers: { Accept: "application/json" }, body: data });
+        const json = await res.json().catch(() => ({}));
+        if (!res.ok || json.success === false) throw new Error(json.message || res.statusText);
+        form.reset();
+        say(d.ok!, "ok");
+      } catch {
+        say(d.error!, "error");
+      } finally {
+        button.disabled = false;
+      }
+    });
+  }
+</script>
