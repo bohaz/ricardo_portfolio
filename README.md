@@ -56,6 +56,11 @@ Vercel detecta Astro sin configuración. Define la variable `SITE_URL` con la UR
 
 El formulario envía los mensajes con [Web3Forms](https://web3forms.com) al correo de la cuenta. La clave de acceso está en `src/components/ContactForm.astro`; es pública por diseño, no es un secreto. Para cambiarla sin tocar el código, define en Vercel la variable `PUBLIC_WEB3FORMS_KEY`. Los mensajes llegan al correo con el que se creó la clave.
 
+## Documentación
+
+- `CHANGELOG.md`: cambios por versión.
+- `docs/proyecto.md`: decisiones, criterios de contenido, cómo rehacer las capturas y pendientes.
+
 ## Línea visual
 
 La misma del banner de LinkedIn: navy `#050816`, azul eléctrico `#1687FF`, cyan `#12D9E8`, gris `#A7B0C2`; Manrope para títulos e Inter para texto, servidas desde el propio sitio.
