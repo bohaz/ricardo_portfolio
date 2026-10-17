@@ -233,8 +233,8 @@ export const websites: Website[] = [
     url: "https://deceroleathers.cl/",
     shot: { desktop: desk("decero-leathers", 537), mobile: phone("decero-leathers", 907) },
     text: {
-      en: { kind: "Leather goods store", summary: "Theme customization for the brand's Jumpseller online store." },
-      es: { kind: "Tienda de artículos de cuero", summary: "Personalización del tema de su tienda en línea en Jumpseller." },
+      en: { kind: "Online leather goods store", summary: "Online store on Jumpseller: catalog by collection, card payments and a theme customized for the brand." },
+      es: { kind: "Tienda online de artículos de cuero", summary: "Tienda online en Jumpseller: catálogo por colecciones, pago con tarjeta y tema adaptado a la marca." },
     },
   },
 ];

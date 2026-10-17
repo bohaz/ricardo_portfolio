@@ -1,5 +1,10 @@
 # Cambios
 
+## Sin publicar
+
+- Decero Leathers aparece como tienda online en Jumpseller (catálogo por colecciones, pago con tarjeta y tema adaptado a la marca), no solo como personalización del tema.
+- La sección de sitios pasa a llamarse «Sitios web y tiendas online» («Websites and online stores» en inglés).
+
 ## 1.0.0 — 16 de octubre de 2026
 
 Primera versión publicada.
